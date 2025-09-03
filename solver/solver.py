@@ -17,26 +17,34 @@ class Solver:
         start_times = []
         end_times = []
         intervals = []
+        is_scheduled = []
         for t in dynamic_tasks:
+            scheduled = self.model.NewBoolVar(f'is_scheduled_{t.name}')
+            is_scheduled.append(scheduled)
             start = self.model.NewIntVar(t.release_time, t.deadline-t.estimated_duration, "START_"+t.name)
             end = self.model.NewIntVar(t.release_time + t.estimated_duration, t.deadline, "END_" + t.name)
-            interval = self.model.NewIntervalVar(start, t.estimated_duration, end, "INTERVAL_" + t.name)
+            interval = self.model.NewOptionalIntervalVar(start, t.estimated_duration, end, scheduled, "INTERVAL_" + t.name)
             start_times.append(start), end_times.append(end), intervals.append(interval)
 
         self.model.AddNoOverlap(intervals)
+        self.model.maximize(sum(dynamic_tasks[i].estimated_duration * is_scheduled[i] for i in range(len(dynamic_tasks))))
 
         status = self.solver.solve(self.model)
 
 
         """ Visualisation and results printing"""
+        print("Solver time (s):", self.solver.WallTime())
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            print(f"Maximum of objective function: {self.solver.objective_value}\n")
             starts = [self.solver.Value(start_times[i]) for i in range(n)]
             ends = [self.solver.Value(end_times[i]) for i in range(n)]
+            scheduled = [self.solver.Value(is_scheduled[i]) for i in range(n)]
             print("Start times:")
             tasks = []
             for i in range(n):
-                print(f'Task {i}: start = {starts[i]}, duration = {dynamic_tasks[i].estimated_duration}')
-                tasks.append(dict(Task=dynamic_tasks[i].name, Type="Dynamic", Deadline=datetime.fromtimestamp(dynamic_tasks[i].deadline), Start=datetime.fromtimestamp(starts[i]), End=datetime.fromtimestamp(ends[i])))
+                if scheduled[i]:
+                    print(f'Task {i}: start = {starts[i]}, duration = {dynamic_tasks[i].estimated_duration}')
+                    tasks.append(dict(Task=dynamic_tasks[i].name, Type="Dynamic", Deadline=datetime.fromtimestamp(dynamic_tasks[i].deadline), Start=datetime.fromtimestamp(starts[i]), End=datetime.fromtimestamp(ends[i])))
             self.visualise(tasks)
             return True
         else:

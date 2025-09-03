@@ -1,5 +1,5 @@
 import random
-
+import time
 class Item:
     def __init__(self, value, size_sampler, label=None):
         self.value = value
@@ -39,8 +39,7 @@ if __name__ == "__main__":
 
     print("Expected sizes (approx):")
     for it in items:
-        print(
-            f" - {it.label}: value={it.value}, E[size]={it.expected_size:.3f}, ratio={it.value / it.expected_size:.3f}")
+        print(f" - {it.label}: value={it.value}, E[size]={it.expected_size:.3f}, ratio={it.value / it.expected_size:.3f}")
 
     print("\nSimulating greedy non-adaptive packing:")
     total = greedy_non_adaptive(items, capacity=1.0)

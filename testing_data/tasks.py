@@ -7,7 +7,7 @@ class TasksCreator:
             PeriodicTask("P1-30s-30m", 0, 4*60*60, 30, 30*60),
             PeriodicTask("P2-5m-20m", 15*60, 7*60*60, 5*60, 20*60),
         ]
-    def return_dynamic_tasks(self):
+    def return_dynamic_tasks_v1(self):
         return [
             DynamicTask("D01-35s", 60, 1 * 60 * 60, 20, 35),
             DynamicTask("D02-35s", 60, 1 * 60 * 60, 20, 35),
@@ -21,6 +21,11 @@ class TasksCreator:
             DynamicTask("D10-55s", 0, 12 * 60, 60, 55),
             DynamicTask("D11-35s", 60, 2 * 60 * 60, 20, 35),
             DynamicTask("D12-45s", 60, 2 * 60 * 60, 40, 45),
+        ]
+
+    def return_dynamic_tasks_v2(self):
+        return [
+            DynamicTask(f"Task_{x}", 0, 30*60, 2*x+111, 2*x+111) for x in range(800)
         ]
 
 
