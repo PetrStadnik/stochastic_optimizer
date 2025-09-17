@@ -1,8 +1,9 @@
+import numpy as np
 from ortools.linear_solver import pywraplp
 from testing_data.tasks import DynamicTask
 
 
-class IlpKnapsackAdaptive:
+class IlpKnapsackAdaptiveOrdered:
 
     def __init__(self, capacity):
         self.solver = pywraplp.Solver.CreateSolver("SCIP")
@@ -23,7 +24,7 @@ class IlpKnapsackAdaptive:
         else:
             return self.solver.wall_time(), None
 
-    def solve(self, dynamic_tasks: [DynamicTask]):
+    def solve(self, dynamic_tasks: [DynamicTask], threshold=(3/4)):
         #print(f"Capacity: {self.capacity}")
         free_capacity = self.capacity
         sum_of_rdur = 0
@@ -36,11 +37,25 @@ class IlpKnapsackAdaptive:
             total_time += wall_time_ms
             if picked is None or picked == []:
                 break
-            rd = dynamic_tasks[picked[0]].real_duration
+            best_task = 0
+            if free_capacity <= self.capacity*threshold:
+                best_std = np.inf
+                for i in range(len(picked)):
+                    if dynamic_tasks[picked[i]].std < best_std:
+                        best_task = i
+                        best_std = dynamic_tasks[picked[i]].std
+            else:
+                best_std = 0
+                for i in range(len(picked)):
+                    if dynamic_tasks[picked[i]].std > best_std:
+                        best_task = i
+                        best_std = dynamic_tasks[picked[i]].std
+
+            rd = dynamic_tasks[picked[best_task]].real_duration
             sum_of_rdur += rd
             free_capacity -= rd
-            selected_tasks.append(dynamic_tasks[picked[0]])
-            del dynamic_tasks[picked[0]]
+            selected_tasks.append(dynamic_tasks[picked[best_task]])
+            del dynamic_tasks[picked[best_task]]
 
         return sum_of_rdur, self.capacity-free_capacity, total_time
 

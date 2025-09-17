@@ -2,6 +2,7 @@ from testing_data.tasks import TasksCreator
 from solver.solver import Solver
 from solver.orknapsack import Knapsack
 from solver.orilp import IlpKnapsack
+from solver.orilp_adaptive_ordered import IlpKnapsackAdaptiveOrdered
 from solver.orilp_adaptive import IlpKnapsackAdaptive
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,6 +37,8 @@ if __name__ == '__main__':
         obj_val_list.append(obj_val)
         run_time_list.append(run_time)
 
+    print(f"TOTAL TIME EXCEEDED: {sum([i-capacity for i in real_dur_sum if i > capacity])}s")
+    print(f"TOTAL UNUSED TIME: {sum([capacity-i for i in obj_val_list if i < capacity])}s")
 
     """ VISUALISATION """
     data1 = np.array(real_dur_sum)

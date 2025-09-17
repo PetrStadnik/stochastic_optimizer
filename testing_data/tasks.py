@@ -30,6 +30,7 @@ class TasksCreator:
             DynamicTask(f"Task_{x}", 0, 30*60, 13*x+111, 13*x+111) for x in range(100)
         ]
 
+    """ DATASET 1 """
     def return_dynamic_tasks_v3(self, seed = 10):
         n = 150
         np.random.seed(seed)
@@ -37,20 +38,39 @@ class TasksCreator:
         std = 20
         durations = np.random.normal(mean, std, n).round().astype(int)
         return [
-            DynamicTask(f"Task_{x}", 0, 30 * 60, mean, durations[x]) for x in range(n)
+            DynamicTask(f"Task_{x}", 0, 30 * 60, mean, max(1, durations[x]), mean=mean, std=std) for x in range(n)
         ]
 
+    """ DATASET 2 """
     def return_dynamic_tasks_v4(self, seed = 10):
         np.random.seed(seed)
         durations1 = np.random.normal(31, 20, np.random.randint(0,20)).round().astype(int)
         durations2 = np.random.normal(330, 30, np.random.randint(0,20)).round().astype(int)
         durations3 = np.random.normal(1250, 50, np.random.randint(0,40)).round().astype(int)
         durations4 = np.random.normal(573, 10, np.random.randint(0,50)).round().astype(int)
-        tasks1 = [DynamicTask(f"Task_31_{i}", 0, 30 * 60, 31, durations1[i], mean=31, std=20) for i in range(len(durations1))]
-        tasks2 = [DynamicTask(f"Task_330_{i}", 0, 30 * 60, 330, durations2[i], mean=330, std=30) for i in range(len(durations2))]
-        tasks3 = [DynamicTask(f"Task_1250_{i}", 0, 30 * 60, 1250, durations3[i], mean=1250, std=50) for i in range(len(durations3))]
-        tasks4 = [DynamicTask(f"Task_573_{i}", 0, 30 * 60, 573, durations4[i], mean=573, std=10) for i in range(len(durations4))]
+        tasks1 = [DynamicTask(f"Task_31_{i}", 0, 30 * 60, 31, max(1, durations1[i]), mean=31, std=20) for i in range(len(durations1))]
+        tasks2 = [DynamicTask(f"Task_330_{i}", 0, 30 * 60, 330, max(1, durations2[i]), mean=330, std=30) for i in range(len(durations2))]
+        tasks3 = [DynamicTask(f"Task_1250_{i}", 0, 30 * 60, 1250, max(1,durations3[i]), mean=1250, std=50) for i in range(len(durations3))]
+        tasks4 = [DynamicTask(f"Task_573_{i}", 0, 30 * 60, 573, max(1, durations4[i]), mean=573, std=10) for i in range(len(durations4))]
         return tasks1 + tasks2 + tasks3 + tasks4
+
+    """ DATASET 3 """
+    def return_dynamic_tasks_v5(self, seed = 10):
+        np.random.seed(seed)
+        durations1 = np.random.normal(31, 20, np.random.randint(0,20)).round().astype(int)
+        durations2 = np.random.normal(330, 200, np.random.randint(0,20)).round().astype(int)
+        durations3 = np.random.normal(1250, 500, np.random.randint(0,20)).round().astype(int)
+        durations4 = np.random.normal(573, 10, np.random.randint(0,20)).round().astype(int)
+        durations5 = np.random.normal(1111, 800, np.random.randint(0, 20)).round().astype(int)
+        durations6 = np.random.normal(333, 300, np.random.randint(0, 20)).round().astype(int)
+        tasks1 = [DynamicTask(f"Task_31_{i}", 0, 30 * 60, 31, max(1, durations1[i]), mean=31, std=20) for i in range(len(durations1))]
+        tasks2 = [DynamicTask(f"Task_330_{i}", 0, 30 * 60, 330, max(1, durations2[i]), mean=330, std=200) for i in range(len(durations2))]
+        tasks3 = [DynamicTask(f"Task_1250_{i}", 0, 30 * 60, 1250, max(1, durations3[i]), mean=1250, std=500) for i in range(len(durations3))]
+        tasks4 = [DynamicTask(f"Task_573_{i}", 0, 30 * 60, 573, max(1, durations4[i]), mean=573, std=10) for i in range(len(durations4))]
+        tasks5 = [DynamicTask(f"Task_1111_{i}", 0, 30 * 60, 1250, max(1, durations5[i]), mean=1111, std=800) for i in range(len(durations5))]
+        tasks6 = [DynamicTask(f"Task_333_{i}", 0, 30 * 60, 573, max(1, durations6[i]), mean=333, std=300) for i in range(len(durations6))]
+
+        return tasks1 + tasks2 + tasks3 + tasks4 + tasks5 + tasks6
 
 class PeriodicTask:
     def __init__(self, name: str, start: int, end: int, duration: int, period: int):
